@@ -4,13 +4,9 @@ import React, { useEffect, useState } from 'react'
 import { PlusCircleIcon}  from '@heroicons/react/24/outline'
 import axios from 'axios'
 import ProductCard from '@/components/ProductCard'
+import { Product } from '@/types'
 
-type Product = {
-  _id: number;
-  title: string;
-  description: string;
-  price: number;
-}
+
 const products = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
@@ -27,10 +23,10 @@ const products = () => {
         <p className='text-2xl'>Add new product</p>
       </Link>
       <div className='p-2 my-4 text-start'>
-        <h1 className='text-sky-800 text-2xl font-bold'>Products</h1>
+        <h1 className='text-sky-800 text-xl font-bold'>Products</h1>
       </div>
       <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4'>
-        {products.map((product) => (
+        {products.slice().reverse().map((product) => (
           <ProductCard key={product._id} product={product} />
         ))}
       </div>

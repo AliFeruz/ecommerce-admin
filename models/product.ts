@@ -13,6 +13,7 @@ const ProductSchema = new Schema({
         type: Number,
         required: true
     }
-});
+    },{ timestamps: true}
+    );
 
 export const Product = models.Product || model("Product", ProductSchema);
