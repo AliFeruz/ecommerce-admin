@@ -12,8 +12,11 @@ const ProductSchema = new Schema({
     price: {
         type: Number,
         required: true
-    }
-    },{ timestamps: true}
-    );
+    },
+    images: {
+        type: [String],
+    },
+    },
+    { timestamps: true });
 
 export const Product = models.Product || model("Product", ProductSchema);
