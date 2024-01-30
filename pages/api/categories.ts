@@ -13,20 +13,17 @@ export default async function handler(
     await mongooseConnect();
 
     if (method === "POST") {
-        const { name } = req.body;
+        const { name, parentCategory } = req.body;
         const categoryDoc = await Category.create({
-          name
+          name,
+          parent: parentCategory
         });
         res.status(200).json(categoryDoc);
       }
     
       if (method === "GET") {
-        if (req.query?.id) {
-          const category = await Category.findOne({_id:req.query.id});
-          res.status(200).json(category);
-        } else {
         const categories = await Category.find({});
         res.status(200).json(categories);
-      }} 
+      } 
 
   }
