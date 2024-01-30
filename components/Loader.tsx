@@ -1,8 +1,11 @@
-import { BounceLoader } from 'react-spinners';
+import { PropagateLoader } from 'react-spinners';
 
 const Loader = () => {
   return (
-    <BounceLoader size={100} color={'#00BFFF'} loading={true}/>
+    <div>
+       <PropagateLoader color="#36d7b7" loading={true}/>
+    </div>
+   
   )
 }
 

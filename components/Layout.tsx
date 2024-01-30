@@ -1,12 +1,15 @@
 import NavBar from "@/components/NavBar";
 import { useSession, signIn, signOut } from "next-auth/react";
 import React, { ReactNode } from "react";
+import Loader from "./Loader";
 
  const Layout = ({ children }: { children: ReactNode }) => {
   const {data:session, status} = useSession();
 
   if (status === "loading") {
-    return <div>Loading...</div>;
+    return <div className="flex h-screen items-center justify-center">
+           <Loader/>
+           </div>;
   }
 
 

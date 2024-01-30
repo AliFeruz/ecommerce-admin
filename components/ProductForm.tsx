@@ -5,11 +5,12 @@ import { useRouter } from 'next/router';
 import { Product } from '@/types';
 import { ArrowUpCircleIcon } from '@heroicons/react/24/solid';
 import Loader from './Loader';
-import { ReactSortable } from'react-sortablejs';
+import { ItemInterface, ReactSortable } from'react-sortablejs';
 
 type Props = {
   product?: Product | null;
 };
+
 
 
 const ProductForm = ({product}: Props) => {
@@ -56,7 +57,12 @@ const ProductForm = ({product}: Props) => {
       setIsUploading(false)
       }
     }
-    
+
+    const updateImagesOrder = (images) => {
+      setImages(images);
+    };
+  
+
   return (
     <>
     <form onSubmit={saveProduct} className='mt-6 p-2'>
@@ -64,13 +70,15 @@ const ProductForm = ({product}: Props) => {
     <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Product name" className="mb-3"/>
     <label>Photos</label>
     <div className='mb-2 flex flex-wrap gap-4'>
+      <ReactSortable className='flex flex-wrap gap-2' list={images} setList={updateImagesOrder}>
       {!!images?.length && images?.map(link => (
-        <div key={link} className=''>
+        <div key={link}>
           <img src={link} alt="product image" className='w-24 h-24 rounded-md'/>
         </div>
       ))}
+      </ReactSortable>
       {isuploading && (
-        <div className='h-24 p-1'>
+        <div className='p-1 items-center flex'>
          <Loader/>
         </div>
       )}

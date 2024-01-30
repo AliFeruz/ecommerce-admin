@@ -6,3 +6,8 @@ export type Product = {
     createdAt: string;
     images: Array<string>
   }
+
+  export type Category = {
+    _id: number;
+    name: string
+  }
