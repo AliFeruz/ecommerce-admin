@@ -9,5 +9,9 @@ export type Product = {
 
   export type Category = {
     _id: number;
-    name: string
+    name: string;
+    parent?: {
+      _id: number | string;
+      name: string;
+    }
   }

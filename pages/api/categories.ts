@@ -22,8 +22,23 @@ export default async function handler(
       }
     
       if (method === "GET") {
-        const categories = await Category.find({});
+        const categories = await Category.find().populate('parent');
         res.status(200).json(categories);
       } 
 
+      if (method === "PUT") {
+        const { name, parentCategory, _id } = req.body;
+        const categoryDoc = await Category.updateOne({_id},{
+          name,
+          parent: parentCategory
+        });
+        res.status(200).json(categoryDoc);
+      } 
+
+      if (method === 'DELETE') {
+        const _id = req.query;
+        await Category.deleteOne({_id: _id});
+        res.status(200).json(true);
+        
+      }
   }
