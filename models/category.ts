@@ -1,5 +1,16 @@
 import mongoose, { Schema, model, models } from "mongoose";
 
+const PropertySchema = new Schema({
+    name: {
+        type: String,
+        required: true,
+    },
+    values: {
+        type: String,
+        required: true,
+    },
+});
+
 
 const CategorySchema = new Schema({
     name: {
@@ -9,7 +20,8 @@ const CategorySchema = new Schema({
     parent: {
         type: mongoose.Types.ObjectId,
         ref: 'Category'
-    }
+    },
+    properties: [PropertySchema],
 });
 
 export const Category = models.Category || model("Category", CategorySchema);

@@ -1,5 +1,5 @@
 import Layout from '@/components/Layout'
-import { Category } from '@/types';
+import { Category, Property } from '@/types';
 import axios from 'axios';
 import React, { useEffect, useState } from 'react'
 import { withSwal } from 'react-sweetalert2';
@@ -7,13 +7,15 @@ import { withSwal } from 'react-sweetalert2';
 interface CreateCategoryRequest {
     name: string;
     parentCategory?: string; 
+    properties?: Property[];
 }
 
 const Categories = ({ swal, ...props }: { swal: any }) => {
     const [editedCategory, setEditedCategory] = useState<Category | null>(null)
     const [name, setName] = useState('');
     const [categories, setCategories] = useState([]);
-    const [parentCategory, setParentCategory] = useState('')
+    const [parentCategory, setParentCategory] = useState('');
+    const [properties, setProperties] = useState<Property[]>([])
    
 
     useEffect(() => {
@@ -43,16 +45,18 @@ const Categories = ({ swal, ...props }: { swal: any }) => {
         })
     }
 
+
     function editCategory(category: Category){
         setEditedCategory(category);
         setName(category.name);
-        setParentCategory(category?.parent?._id?.toString() || '')
+        setParentCategory(category?.parent?._id?.toString() || '');
+        setProperties(category.properties || [])
     }
 
    async function createCategory(e: React.FormEvent){
         e.preventDefault();
 
-        let requestBody: CreateCategoryRequest = { name };
+        let requestBody: CreateCategoryRequest = { name, properties };
 
        
         if (parentCategory !== '') {
@@ -66,7 +70,37 @@ const Categories = ({ swal, ...props }: { swal: any }) => {
             await axios.post('/api/categories', requestBody);
         }  
             setName('');
+            setParentCategory('');
+            setProperties([]);
             fetchCategories();
+            
+    }
+
+    function addProperty() {
+        setProperties((prevProperties) => [
+          ...prevProperties,
+          { name: '', values: '' },
+        ]);
+      }
+
+    function handlePropertyName(index: number, property: Property, newName: string) {
+        setProperties((prev) => {
+          const updatedProperties = [...prev];
+          updatedProperties[index].name = newName;
+          return updatedProperties;
+        });
+      }
+    
+      function handlePropertyValues(index: number, property:Property, newValues: string) {
+        setProperties((prev) => {
+          const updatedProperties = [...prev];
+          updatedProperties[index].values = newValues;
+          return updatedProperties;
+        });
+      }
+
+    function removeProperty(index: number) {
+        setProperties((prev) => prev.filter((_, i) => i !== index));
     }
 
   return (
@@ -76,8 +110,9 @@ const Categories = ({ swal, ...props }: { swal: any }) => {
         </div>
         <form onSubmit={createCategory} className='flex flex-col gap-2'>
         <p>{editedCategory ? `Edit category ${editedCategory.name}` : 'Create new category'}</p>
-        <div className='flex gap-2'>
-        <select className='w-50 rounded-md border border-sky-500' 
+        <div className='flex-col'>
+            <div className='flex gap-2 mb-2'>
+            <select className='w-50 rounded-md border border-sky-500' 
         value={parentCategory}
         onChange={e => setParentCategory(e.target.value)}>
         <option value='' >No parent category</option>
@@ -86,11 +121,42 @@ const Categories = ({ swal, ...props }: { swal: any }) => {
         )) }
         </select>
         <input type="text" placeholder='Category name' 
-        value={name} onChange={(e) => setName(e.target.value)}/>   
-        <button type='submit'className='btn-primary'>Save</button>
+        value={name} onChange={(e) => setName(e.target.value)}/>  
+            </div>
+         <div className='flex-col mb-1 gap-2'>
+            <div className='gap-2 mb-1 flex-col flex'>
+                <label>Properties</label>
+                <button type='button' onClick={addProperty}
+                className='btn-primary mb-1'>Add new property</button>
+            </div>
+            {properties.length > 0 && properties.map((property: Property, index) => (
+                <div className='flex  mb-2 gap-1' key={index}>
+                   <input type="text" onChange={(e) => handlePropertyName(index, property, e.target.value)}
+                   value={property.name} placeholder='property name (example: color)' />
+                   <input type="text" onChange={(e) => handlePropertyValues(index, property, e.target.value)}
+                   value={property.values} placeholder='values, comma separated' />
+                   <button onClick={() => removeProperty(index)} type='button'
+                   className="btn-primary">Remove</button>
+                </div>
+            ))}
+            <div className='flex justify-between mb-2'>
+                {editedCategory && (
+                    <button onClick={() => {
+                        setEditedCategory(null);
+                        setName('');
+                        setParentCategory('');
+                        setProperties([])
+                    }}
+                    type='button'
+                    className='btn-primary'>Cancel</button>
+                )}
+            <button type='submit'className='btn-primary'>Save</button>
+            </div>
+         </div>
         </div>
         </form>
-        <div className='mt-2'>
+        {!editedCategory && (
+            <div className='mt-2'>
             <table className='basic'>
                 <thead>
                     <tr>
@@ -116,6 +182,7 @@ const Categories = ({ swal, ...props }: { swal: any }) => {
                 </tbody>
             </table>
         </div>
+        )}
     </Layout>
   )
 }

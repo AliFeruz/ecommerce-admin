@@ -11,11 +11,11 @@ input:focus, textarea:focus{
 }
 
 label {
-  @apply text-sm text-gray-500;
+  @apply text-gray-500;
 }
 
 .btn-primary {
-  @apply bg-sky-500 text-white hover:bg-sky-300 p-2 w-[100px] rounded-md;
+  @apply bg-sky-500 text-white hover:bg-sky-300 py-1 px-2 w-auto rounded-md;
 }
 
 table.basic{

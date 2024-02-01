@@ -4,7 +4,8 @@ export type Product = {
     description: string;
     price: number;
     createdAt: string;
-    images: Array<string>
+    images: Array<string>;
+    category?: string;
   }
 
   export type Category = {
@@ -13,5 +14,12 @@ export type Product = {
     parent?: {
       _id: number | string;
       name: string;
-    }
+    };
+    properties?: Property[];
+  }
+
+  export type Property = {
+    _id?: number;
+    name: string;
+    values: string
   }

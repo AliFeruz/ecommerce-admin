@@ -1,10 +1,11 @@
 import Link from 'next/link'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import axios from "axios";
 import { useRouter } from 'next/router';
-import { Product } from '@/types';
+import { Category, Product, Property } from '@/types';
 import { ArrowUpCircleIcon } from '@heroicons/react/24/solid';
 import Loader from './Loader';
+import { ReactSortable } from 'react-sortablejs';
 
 type Props = {
   product?: Product | null;
@@ -15,15 +16,21 @@ const ProductForm = ({product}: Props) => {
     const [title, setTitle] = useState(product?.title ||'');
     const [description, setDescription] = useState(product?.description || '');
     const [price, setPrice] = useState(product?.price ||'');
+    const [category, setCategory] = useState(product?.category || '')
     const [images, setImages] = useState(product?.images || []);
     const [isuploading, setIsUploading] = useState(false);
+    const [categories, setCategories] = useState<Category[]>([])
     const router = useRouter();
 
-    
+    useEffect(() => {
+      axios.get('/api/categories').then((res) => {
+        setCategories(res.data);
+      })
+    },[])
 
     async function saveProduct(e: React.FormEvent) {
         e.preventDefault();
-        const data = { title, description, price, images };
+        const data = { title, description, price, images, category };
 
         if (product?._id) {
         const res = await axios.put('/api/products', {...data, _id: product?._id });
@@ -58,22 +65,37 @@ const ProductForm = ({product}: Props) => {
       }
     }
 
+    const propertiesToFill = [];
+    if (categories.length > 0 && category) {
+      const selCatInfo = categories.find(({_id}) => _id.toString() === category);
+      propertiesToFill.push(...selCatInfo?.properties ?? []);
+      
+    }
     
 
   return (
     <>
-    <form onSubmit={saveProduct} className='mt-6 p-2'>
+    <form onSubmit={saveProduct} className='mt-6 flex flex-col p-2'>
     <label>Name</label>
     <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Product name" className="mb-3"/>
+    <label>Add category</label>
+    <select value={category} onChange={(e) => setCategory(e.target.value)} 
+    className='mb-3 rounded-md border border-sky-500'>
+      <option value="">Uncategorized</option>
+      {categories.length > 0 && categories.map((category: Category) => (
+        <option key={category._id} value={category._id}>{category.name}</option>
+      ))}
+    </select>
+    {propertiesToFill.length > 0 && propertiesToFill.map((property: Property) => (
+      <div>{property.name}</div>
+    ))}
     <label>Photos</label>
     <div className='mb-2 flex flex-wrap gap-4'>
-     
       {!!images?.length && images?.map((link, index) => (
         <div key={index}>
           <img src={link} alt="product image" className='w-24 h-24 rounded-md'/>
         </div>
       ))}
-      
       {isuploading && (
         <div className='p-1 items-center flex'>
          <Loader/>
