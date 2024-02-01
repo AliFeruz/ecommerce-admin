@@ -6,6 +6,7 @@ export type Product = {
     createdAt: string;
     images: Array<string>;
     category?: string;
+    properties?: object
   }
 
   export type Category = {
@@ -15,11 +16,11 @@ export type Product = {
       _id: number | string;
       name: string;
     };
-    properties?: Property[];
+    properties?: object;
   }
 
   export type Property = {
     _id?: number;
     name: string;
-    values: string
+    values: string[];
   }

@@ -27,19 +27,20 @@ export default async function handler(
   }
 
   if (method === "POST") {
-      const { title, description, price, images, category } = req.body;
+      const { title, description, price, images, category, properties } = req.body;
       const productDoc = await Product.create({
         title,
         description,
         price,
         images,
-        category
+        category,
+        properties
       });
       res.status(200).json(productDoc);
     }
   if (method === 'PUT') {
-    const { title, description, price, images, _id, category } = req.body;
-    const product = await Product.findOneAndUpdate({_id}, {title, description, price, images, category})
+    const { title, description, price, images, _id, category, properties } = req.body;
+    const product = await Product.findOneAndUpdate({_id}, {title, description, price, images, category, properties})
     res.status(200).json(product);
   }
 }

@@ -5,7 +5,7 @@ import { useRouter } from 'next/router';
 import { Category, Product, Property } from '@/types';
 import { ArrowUpCircleIcon } from '@heroicons/react/24/solid';
 import Loader from './Loader';
-import { ReactSortable } from 'react-sortablejs';
+
 
 type Props = {
   product?: Product | null;
@@ -16,7 +16,8 @@ const ProductForm = ({product}: Props) => {
     const [title, setTitle] = useState(product?.title ||'');
     const [description, setDescription] = useState(product?.description || '');
     const [price, setPrice] = useState(product?.price ||'');
-    const [category, setCategory] = useState(product?.category || '')
+    const [category, setCategory] = useState(product?.category || '');
+    const [productProp, setProductProp] = useState<{ [key: string]: string }>(product?.properties as { [key: string]: string } || {})
     const [images, setImages] = useState(product?.images || []);
     const [isuploading, setIsUploading] = useState(false);
     const [categories, setCategories] = useState<Category[]>([])
@@ -29,25 +30,35 @@ const ProductForm = ({product}: Props) => {
     },[])
 
     async function saveProduct(e: React.FormEvent) {
-        e.preventDefault();
-        const data = { title, description, price, images, category };
+      e.preventDefault();
+      const data = { title, description, price, images, category, properties: productProp };
 
-        if (product?._id) {
-        const res = await axios.put('/api/products', {...data, _id: product?._id });
-          if (res.status === 200) {
-            router.push('/products');
-          }
-        } else {
-        const response = await axios.post('/api/products', data);
-        if (response.status === 200) {
-          setTitle('');
-          setDescription('');
-          setPrice('');
-          setImages([]);
+      if (product?._id) {
+      const res = await axios.put('/api/products', {...data, _id: product?._id });
+        if (res.status === 200) {
           router.push('/products');
-        }}
-      }
+        }
+      } else {
+      const response = await axios.post('/api/products', data);
+      if (response.status === 200) {
+        setTitle('');
+        setDescription('');
+        setPrice('');
+        setImages([]);
+        setProductProp({})
+        router.push('/products');
+      }}
+    }
+
+    function setProductProperty(propName: string, value: string) {
+      setProductProp((prev: Record<string, string>) => {
+        const newProductProps: Record<string, string> = { ...prev };
+        newProductProps[propName] = value;
+        return newProductProps;
+      });
+    }
     
+
     async function uploadImages(e: React.ChangeEvent<HTMLInputElement>) {
       const files = Array.from(e.target?.files || []);
       if (files.length > 0) {
@@ -67,9 +78,13 @@ const ProductForm = ({product}: Props) => {
 
     const propertiesToFill = [];
     if (categories.length > 0 && category) {
-      const selCatInfo = categories.find(({_id}) => _id.toString() === category);
-      propertiesToFill.push(...selCatInfo?.properties ?? []);
-      
+      let selCatInfo = categories.find(({_id}) => _id.toString() === category);
+      propertiesToFill.push(...Object.values(selCatInfo?.properties ?? []));
+      while(selCatInfo?.parent?._id) {
+        const parentCat = categories.find(({_id}) => _id.toString() === selCatInfo?.parent?._id);
+        propertiesToFill.push(...Object.values(parentCat?.properties || []));
+        selCatInfo = parentCat;
+      }
     }
     
 
@@ -87,7 +102,15 @@ const ProductForm = ({product}: Props) => {
       ))}
     </select>
     {propertiesToFill.length > 0 && propertiesToFill.map((property: Property) => (
-      <div>{property.name}</div>
+      <div key={property._id} className='flex gap-2 my-2'>
+        <div className='text-xl'>{property.name}</div>
+        <select value={productProp[property.name]}
+        onChange={(e) => setProductProperty(property.name, e.target.value)}>
+        {property.values.map((value) => (
+          <option key={value} value={value}>{value}</option>
+        ))}
+        </select>
+      </div>
     ))}
     <label>Photos</label>
     <div className='mb-2 flex flex-wrap gap-4'>

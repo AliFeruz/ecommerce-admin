@@ -13,7 +13,7 @@ interface CreateCategoryRequest {
 const Categories = ({ swal, ...props }: { swal: any }) => {
     const [editedCategory, setEditedCategory] = useState<Category | null>(null)
     const [name, setName] = useState('');
-    const [categories, setCategories] = useState([]);
+    const [categories, setCategories] = useState<Category[]>([]);
     const [parentCategory, setParentCategory] = useState('');
     const [properties, setProperties] = useState<Property[]>([])
    
@@ -56,7 +56,13 @@ const Categories = ({ swal, ...props }: { swal: any }) => {
    async function createCategory(e: React.FormEvent){
         e.preventDefault();
 
-        let requestBody: CreateCategoryRequest = { name, properties };
+        let requestBody: CreateCategoryRequest = { 
+            name,
+            properties:properties.map(p => ({
+                name:p.name,
+                values:p.values,
+              })),
+         };
 
        
         if (parentCategory !== '') {
@@ -79,7 +85,7 @@ const Categories = ({ swal, ...props }: { swal: any }) => {
     function addProperty() {
         setProperties((prevProperties) => [
           ...prevProperties,
-          { name: '', values: '' },
+          { name: '', values: [] },
         ]);
       }
 
@@ -94,7 +100,7 @@ const Categories = ({ swal, ...props }: { swal: any }) => {
       function handlePropertyValues(index: number, property:Property, newValues: string) {
         setProperties((prev) => {
           const updatedProperties = [...prev];
-          updatedProperties[index].values = newValues;
+          updatedProperties[index].values = newValues.split(',');
           return updatedProperties;
         });
       }
@@ -134,7 +140,7 @@ const Categories = ({ swal, ...props }: { swal: any }) => {
                    <input type="text" onChange={(e) => handlePropertyName(index, property, e.target.value)}
                    value={property.name} placeholder='property name (example: color)' />
                    <input type="text" onChange={(e) => handlePropertyValues(index, property, e.target.value)}
-                   value={property.values} placeholder='values, comma separated' />
+                   value={property.values.join(',')} placeholder='values, comma separated' />
                    <button onClick={() => removeProperty(index)} type='button'
                    className="btn-primary">Remove</button>
                 </div>

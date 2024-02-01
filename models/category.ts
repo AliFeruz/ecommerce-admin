@@ -6,7 +6,7 @@ const PropertySchema = new Schema({
         required: true,
     },
     values: {
-        type: String,
+        type: [String],
         required: true,
     },
 });
