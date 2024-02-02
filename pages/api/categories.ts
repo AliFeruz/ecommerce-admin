@@ -1,7 +1,7 @@
 import { mongooseConnect } from "@/lib/mongoose";
 import { Category } from "@/models/category";
 import { NextApiRequest, NextApiResponse } from "next";
-
+import { isAdminRequest } from "./auth/[...nextauth]";
 
 
 export default async function handler(
@@ -11,6 +11,8 @@ export default async function handler(
     const { method } = req;
     
     await mongooseConnect();
+
+    await isAdminRequest({req, res});
 
     if (method === "POST") {
         const { name, parentCategory, properties } = req.body;
