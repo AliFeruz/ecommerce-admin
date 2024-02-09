@@ -1,5 +1,5 @@
 import NavBar from "@/components/NavBar";
-import { useSession, signIn, signOut } from "next-auth/react";
+import { useSession, signIn } from "next-auth/react";
 import React, { ReactNode } from "react";
 import Loader from "./Loader";
 
@@ -15,7 +15,7 @@ import Loader from "./Loader";
 
   if (!session || status !== "authenticated") {
     return (
-      <main className='bg-sky-900 h-screen w-screen flex items-center'>
+      <main className='bg-gray-200 h-screen w-screen flex items-center'>
         <div className="text-center w-full">
           <button onClick={() => signIn('google')} className="bg-sky-400 p-2 px-4 rounded-lg">Login with Google</button>
         </div>
@@ -24,9 +24,11 @@ import Loader from "./Loader";
   }
 
   return (
-    <main className="bg-sky-600 min-h-screen w-screen flex">
+    <main className="bg-bgGray min-w-full flex">
+      <div className="w-1/5 p-4 min-h-screen">
       <NavBar />
-      <div className="bg-sky-100 p-4 flex-grow my-3 mr-3 rounded-lg">
+      </div>
+      <div className="bg-gray-100 drop-shadow-xl p-4 w-4/5 my-3 mr-3 rounded-lg">
       {children}
       </div>   
     </main>
