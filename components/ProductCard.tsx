@@ -10,7 +10,7 @@ type Props = {
 
 
 const ProductCard = ({ product }: Props) => (
-  <div className='bg-white rounded-md p-4'>
+  <div className='bg-white rounded-md p-4 w-[180px]'>
     <div className='flex gap-3 items-center p-2 mb-3 justify-between'>
       <Link href={`/products/delete/${product._id}`}>
       <button>
@@ -23,15 +23,6 @@ const ProductCard = ({ product }: Props) => (
     </div>
     <div className='p-1 border-t border-sky-500'>
       <h1 className='text-xl mb-2'>{product.title}</h1>
-    </div>
-    <div className="p-1 h-auto rounded-md">
-    <p className="text text-lg">{product.description}</p>
-    </div>
-    <div className='p-1'>
-      <img src={product?.images[0]} alt="product img" className='h-24 w-24 rounded-md'/>
-    </div>
-    <div className='p-1 mb-2'>
-    <p className='text-gray-600'>${product.price}</p>
     </div>
     <div className="flex items-center mt-4 border-t border-text pt-4 text-gray-500">
         <span>Created: {multiFormatDateString(product.createdAt)}</span>

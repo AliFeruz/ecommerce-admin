@@ -47,10 +47,10 @@ const Categories = ({ swal, ...props }: { swal: any }) => {
 
 
     function editCategory(category: Category){
-        setEditedCategory(category);
-        setName(category.name);
-        setParentCategory(category?.parent?._id?.toString() || '');
-        setProperties(category.properties || [])
+            setEditedCategory(category);
+            setName(category.name);
+            setParentCategory(category?.parent?._id?.toString() || '');
+            setProperties(category.properties || []);
     }
 
    async function createCategory(e: React.FormEvent){

@@ -7,7 +7,7 @@ import ProductCard from '@/components/ProductCard'
 import { Product } from '@/types'
 
 
-const products = () => {
+const Products = () => {
   const [products, setProducts] = useState<Product[]>([]);
 
 
@@ -34,4 +34,4 @@ const products = () => {
   )
 }
 
-export default products
+export default Products

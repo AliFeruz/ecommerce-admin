@@ -15,7 +15,7 @@ export const authOptions = {
   ],
   adapter,
   callbacks: {
-    session: ({ token, session, user} : any) => {
+    session: ({ session} : any) => {
       if (adminEmails.includes(session?.user?.email)){
         return {
           ...session,
